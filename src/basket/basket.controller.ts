@@ -1,5 +1,5 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { AddProductToBasketResponse } from 'src/interfaces/basket';
+import { Body, Controller, Delete, Inject, Param, Post } from '@nestjs/common';
+import { AddProductToBasketResponse, DeleteProductFromBasketResponse } from 'src/interfaces/basket';
 import { BasketService } from './basket.service';
 import { AddProductDto } from './dto/add-product.dto';
 
@@ -14,5 +14,13 @@ export class BasketController {
     @Body() item: AddProductDto             // przekazanie co otrzymuję w body.request
   ): AddProductToBasketResponse {           // jaki response zwraca wfunkcja
     return this.basketService.add(item);    // response 
+  }
+
+
+  @Delete('/:index')                                    // metoda DELETE na główny adress kontrolera z przekazanym indeksem '/basket/1'
+  deleteProductFromBasket( 
+    @Param('index') index: string,                      //odebranie parametru (odebrane parametry są stringami)
+  ): DeleteProductFromBasketResponse {                  // response jaki jest zwracany
+    return this.basketService.remove(Number(index));    // response
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AddProductToBasketResponse } from 'src/interfaces/basket';
+import { AddProductToBasketResponse, DeleteProductFromBasketResponse } from 'src/interfaces/basket';
 import { AddProductDto } from './dto/add-product.dto';
 
 @Injectable()
@@ -30,6 +30,22 @@ export class BasketService {
     return {
       isSuccess: true,
       index: this.items.length - 1,
+    }
+  }
+
+  remove(index: number): DeleteProductFromBasketResponse {
+
+    // sprawdzenie czy z przekazanym indeksem jest wszystko w porządku
+    if(index < 0 || index >= this.items.length) return { isSuccess: false }
+
+    // usunięcie danego przedmiotu o wskazanym indeksie
+    this.items.splice(index, 1);
+
+    // pokaż zawartość basket po usunięciu jednego przedmiotu
+    console.log('Lista przedmiotów w koszyku po usunięci', this.items);
+
+    return {
+      isSuccess: true
     }
   }
 }
