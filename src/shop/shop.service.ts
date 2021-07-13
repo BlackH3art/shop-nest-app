@@ -11,4 +11,12 @@ export class ShopService {
       { id: 3, name: "krzesło", category: "boks", description: "Świtny zamiennik białego ręcznika, jeżeli nie ma takowego pod ręką, zawsze można w sędziego rzucić krzesłem.", price: 13.32},
     ]
   }
+
+  hasProduct(name: string): boolean {
+    return this.getProducts().some((item) => item.name === name)
+  }
+
+  getPriceOfProduct(name: string): number {
+    return this.getProducts().find(item => item.name === name).price;
+  }
 }

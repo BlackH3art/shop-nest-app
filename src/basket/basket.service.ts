@@ -1,10 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { AddProductToBasketResponse, DeleteProductFromBasketResponse } from 'src/interfaces/basket';
+import { Inject, Injectable } from '@nestjs/common';
+import { AddProductToBasketResponse, DeleteProductFromBasketResponse, GetTotalPriceResponse, listOfProductsInBasketResponse } from 'src/interfaces/basket';
+import { ShopService } from 'src/shop/shop.service';
 import { AddProductDto } from './dto/add-product.dto';
 
 @Injectable()
 export class BasketService {
   private items: AddProductDto[] = [];
+
+  constructor(
+    @Inject(ShopService) private shopService: ShopService
+  ) {
+
+  }
 
   add(item: AddProductDto): AddProductToBasketResponse {
 
@@ -13,7 +20,8 @@ export class BasketService {
       typeof item.name !== 'string' || 
       typeof item.count !== 'number' ||
       item.name === '' || 
-      item.count < 1
+      item.count < 1 ||
+      !this.shopService.hasProduct(item.name)
     ) {
       return {
         isSuccess: false,
@@ -47,5 +55,26 @@ export class BasketService {
     return {
       isSuccess: true
     }
+  }
+
+  list(): listOfProductsInBasketResponse {
+    return this.items
+  }
+
+  getTotalPrice(): GetTotalPriceResponse {
+
+    if(!this.items.every(item => this.shopService.hasProduct(item.name))) {
+
+      const alternativeBasket = this.items.filter(item => this.shopService.hasProduct(item.name))
+
+      return {
+        isSuccess: false,
+        alternativeBasket,
+      }
+    }
+
+    return this.items
+      .map(item => this.shopService.getPriceOfProduct(item.name) * item.count * 1.23)
+      .reduce((prev, curr) => prev + curr, 0)
   }
 }
