@@ -16,3 +16,6 @@ import { ShopModule } from './shop/shop.module';
   providers: [AppService],
 })
 export class AppModule {}
+
+// zapobieganie problemowi: circular reference gdzie jeden moduł korzysta z drugiego i ten drugi z pierwszego.
+// forwardRef( () => NazwaServicuLubModułu)
