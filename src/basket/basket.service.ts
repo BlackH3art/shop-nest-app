@@ -31,6 +31,8 @@ export class BasketService {
     // dodaj do koszyka
     this.items.push(item);
 
+    this.shopService.addBoughtCounter(item.id);
+
     // wydrukuj listę rzeczy w koszyku
     console.log('Lista rzeczy w koszyku --> ', this.items);
     
@@ -61,7 +63,7 @@ export class BasketService {
     return this.items
   }
 
-  getTotalPrice(): GetTotalPriceResponse {
+  async getTotalPrice(): Promise<GetTotalPriceResponse> {
 
     if(!this.items.every(item => this.shopService.hasProduct(item.name))) {
 
@@ -73,13 +75,15 @@ export class BasketService {
       }
     }
 
-    return this.items
-      .map(item => this.shopService.getPriceOfProduct(item.name) * item.count * 1.23)
-      .reduce((prev, curr) => prev + curr, 0)
+    return (await Promise.all(
+
+      this.items
+        .map(async item => (await this.shopService.getPriceOfProduct(item.name)) * item.count * 1.23)))
+        .reduce((prev, curr) => prev + curr, 0)
   }
 
-  countPromotion(): number {
-    return this.getTotalPrice() > 10 ? 1 : 0;
+  async countPromotion(): Promise<number> {
+    return (await this.getTotalPrice()) > 10 ? 1 : 0;
   }
 
 }

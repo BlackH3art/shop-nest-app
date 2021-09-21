@@ -1,5 +1,7 @@
+import { ShopItem } from "src/shop/shop-item.entity";
+
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   category: string;
   description: string;
@@ -7,3 +9,7 @@ export interface Product {
 }
 
 export type GetAllProductsResponse = Product[];
+
+export type GetOneProductResponse = ShopItem;
+
+export type CreateProductResponse = ShopItem;
