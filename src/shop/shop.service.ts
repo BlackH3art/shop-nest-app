@@ -16,13 +16,17 @@ export class ShopService {
 
   constructor(
     @Inject(forwardRef(() => BasketService)) private basketService: BasketService,
-    @InjectRepository(ShopItem) private shopItemRepository: Repository<ShopItem>
+    // nie muszę używać repozytoria
+    // @InjectRepository(ShopItem) private shopItemRepository: Repository<ShopItem>
   ) {
 
   }
 
   async getProducts(): Promise<GetAllProductsResponse> {
-    return await this.shopItemRepository.find();
+    // return await this.shopItemRepository.find();
+
+    // dzięki Active record nie musimy korzystać z repozytorium 
+    return await ShopItem.find();
   }
 
   async hasProduct(name: string): Promise<boolean> {
@@ -34,11 +38,15 @@ export class ShopService {
   }
 
   async getOneItem(id: string): Promise<ShopItem> {
-    return await this.shopItemRepository.findOneOrFail(id);
+    // return await this.shopItemRepository.findOneOrFail(id);
+
+    return await ShopItem.findOneOrFail(id);
   }
 
   async deleteProduct(id: string) {
-    await this.shopItemRepository.delete(id);
+    // await this.shopItemRepository.delete(id);
+
+    await ShopItem.delete(id);
   }
 
   async createProduct() {
@@ -48,21 +56,32 @@ export class ShopService {
     newItem.name = 'pistolet';
     newItem.description = 'Ten pistolet strzela';
 
-    await this.shopItemRepository.save(newItem);
+    // await this.shopItemRepository.save(newItem);
+
+    // dzięki active record nasz item sam już posiada metodę save i może zapisać sam siebie.
+    await newItem.save();
 
     return newItem;
   }
 
   async addBoughtCounter(id: string) {
 
-    await this.shopItemRepository.update(id, {
+    // await this.shopItemRepository.update(id, {
+    //   wasEverBought: true
+    // })
+
+    await ShopItem.update(id, {
       wasEverBought: true
     })
 
-    const item = await this.shopItemRepository.findOneOrFail(id);
+    // const item = await this.shopItemRepository.findOneOrFail(id);
+
+    const item = await ShopItem.findOneOrFail(id);
 
     item.boughtCount++
 
-    await this.shopItemRepository.save(item);
+    // await this.shopItemRepository.save(item);
+
+    await item.save();
   }
 }

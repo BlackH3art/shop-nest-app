@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 
+// extends BaseEntity - korzystanie z Active record
 @Entity()
-export class ShopItem {
+export class ShopItem extends BaseEntity {
 
   // automatyczne generowanie nieprzeiwdywalnych ID
   // przekazać 'uuid' do dekoratora @PrimaryGeneratedColumn

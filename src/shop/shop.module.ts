@@ -7,7 +7,8 @@ import { ShopService } from "./shop.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ ShopItem ]),
+    // przerobienie na Active Record - nie trzeba korzytać z repozytoria
+    // TypeOrmModule.forFeature([ ShopItem ]),
     forwardRef(() => BasketModule)
   ],
   controllers: [ShopController],
