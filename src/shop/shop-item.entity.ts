@@ -22,7 +22,7 @@ export class ShopItem extends BaseEntity {
   category: string;
 
   @Column({
-    length: 150,
+    length: 149,
     default: null,
     nullable: true
   })
