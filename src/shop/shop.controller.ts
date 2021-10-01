@@ -1,5 +1,5 @@
 import { Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
-import { CreateProductResponse, GetAllProductsResponse, GetOneProductResponse } from 'src/interfaces/shop';
+import { CreateProductResponse, GetAllProductsResponse, GetOneProductResponse, GetPaginatedListOfProductsResponse } from 'src/interfaces/shop';
 import { ShopService } from './shop.service';
 
 @Controller('shop')
@@ -9,9 +9,11 @@ export class ShopController {
     @Inject(ShopService) private shopService: ShopService,
   ) {}
 
-  @Get('/')
-  getProductsList(): Promise<GetAllProductsResponse> {
-    return this.shopService.getProducts();
+  @Get('/:page')
+  getProductsList(
+    @Param('page') page: string,
+  ): Promise<GetPaginatedListOfProductsResponse> {
+    return this.shopService.getProducts(Number(page));
   }
 
   @Get('/find/:searchTerm')

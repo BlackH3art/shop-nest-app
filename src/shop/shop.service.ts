@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BasketService } from 'src/basket/basket.service';
-import { GetAllProductsResponse } from 'src/interfaces/shop';
+import { GetAllProductsResponse, GetPaginatedListOfProductsResponse } from 'src/interfaces/shop';
 import { Repository } from 'typeorm';
 import { ShopItem } from './shop-item.entity';
 
@@ -22,19 +22,37 @@ export class ShopService {
 
   }
 
-  async getProducts(): Promise<GetAllProductsResponse> {
+  async getProducts(currentPage = 1): Promise<GetPaginatedListOfProductsResponse> {
     // return await this.shopItemRepository.find();
-
     // dzięki Active record nie musimy korzystać z repozytorium 
-    return await ShopItem.find();
+
+    // metoda do paginacji .findAndCount()
+    // zwraca tablicę, pierwszy element żądane rekordy, drugi ich łączna liczba
+
+    const maxPerPage = 5;
+
+    const [items, count] = await ShopItem.findAndCount({
+      skip: maxPerPage * (currentPage - 1),
+      take: maxPerPage
+    });
+
+    const pagesCount = Math.ceil(count / maxPerPage);
+
+    const paginatedList = {
+      items,
+      pagesCount
+    }
+    
+
+    return paginatedList;
   }
 
   async hasProduct(name: string): Promise<boolean> {
-    return (await this.getProducts()).some((item) => item.name === name);
+    return (await this.getProducts()).items.some((item) => item.name === name);
   }
 
   async getPriceOfProduct(name: string): Promise<number> {
-    return (await this.getProducts()).find(item => item.name === name).price;
+    return (await this.getProducts()).items.find(item => item.name === name).price;
   }
 
   async getOneItem(id: string): Promise<ShopItem> {
