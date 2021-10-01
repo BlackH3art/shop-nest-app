@@ -14,6 +14,13 @@ export class ShopController {
     return this.shopService.getProducts();
   }
 
+  @Get('/find/:searchTerm')
+  testFindItem(
+    @Param('searchTerm') searchTerm: string, 
+  ): Promise<GetAllProductsResponse> {
+    return this.shopService.findProducts(searchTerm);
+  }
+
   @Get('/:id')
   getOneProduct(
     @Param('id') id: string

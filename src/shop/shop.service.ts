@@ -84,4 +84,12 @@ export class ShopService {
 
     await item.save();
   }
+
+  async findProducts(searchTerm: string): Promise<GetAllProductsResponse> {
+    return await ShopItem.find({
+      order: {
+        price: "ASC"
+      }
+    });
+  }
 }
